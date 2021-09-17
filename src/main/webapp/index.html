@@ -1,10 +1,53 @@
-<!DOCTYPE html>
 <html>
     <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>rodioning.js</title>
+        <style type="text/css">
+            body {
+                background-color: black;
+                color: #f5da42;
+                width: 1000px;
+                margin: auto;
+                font-family: monospace;
+                font-size: 12pt;
+            }
+        </style>
     </head>
+
     <body>
-        <h1>Hello World!</h1>
+        <pre id="terminal">
+        #include &lt;string&gt;
+        int main(int argc, char* argv[]) {
+
+        }
+        </pre>
+        <span id="textspan"></span>
+        <script type="text/javascript">
+            const endpointName = "/downloadProgramText";
+            
+            function getWebSocketURL() {
+                const protocol = window.location.protocol;
+                const host = window.location.host;
+                
+                if (protocol === "http:") {
+                    return "ws://" + host + endpointName;
+                } else if (protocol === "https:") {
+                    return "wss://" + host + endpointName;
+                } else {
+                    throw "Unknown protocol '" + protocol + "'.";
+                }
+            }
+            
+            const webSocketURL = getWebSocketURL();
+            console.log(webSocketURL);
+            let socket = new WebSocket(webSocketURL);
+            
+            socket.onopen = function(e) {
+              socket.send("fhfds");  
+            };
+            
+            socket.onmessage = function(event) {
+                document.getElementById("textspan").innerHTML = event.data;
+            };
+        </script>
     </body>
 </html>
