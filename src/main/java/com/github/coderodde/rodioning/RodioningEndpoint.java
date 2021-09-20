@@ -4,13 +4,9 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.websocket.CloseReason;
+import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
 import javax.websocket.Session;
-import javax.websocket.server.ServerEndpoint;
 
 /**
  * This class implements the web socket endpoint for pushing program text to the
@@ -20,14 +16,13 @@ import javax.websocket.server.ServerEndpoint;
  * @version 1.6 (Sep 16, 2021)
  * @since 1.6 (Sep 16, 2021)
  */
-@ServerEndpoint(value = "/download")
-public final class RodioningWebsocketServer {
+public class RodioningEndpoint extends Endpoint {
 
     private static final Logger LOGGER = 
-            Logger.getLogger(RodioningWebsocketServer.class.getSimpleName());
+            Logger.getLogger(RodioningEndpoint.class.getSimpleName());
     
-    @OnOpen
-    public void open(Session session, EndpointConfig conf) {
+    @Override
+    public void onOpen(Session session, EndpointConfig config) {
         LOGGER.log(Level.INFO, "Session [{0}] opened.", session);
         
         try {
@@ -41,27 +36,22 @@ public final class RodioningWebsocketServer {
         }
     }
     
-    @OnMessage
-    public void message(Session session, String message) {
-        // Ignore incoming data.
+    @Override
+    public void onClose(Session session, CloseReason closeReason) {
+        LOGGER.log(
+                Level.INFO, 
+                "Session [{0}] closed. Reason: {1}", 
+                objs(session, closeReason));
     }
     
-    @OnError
-    public void error(Session session, Throwable throwable) {
+    @Override
+    public void onError(Session session, Throwable throwable) {
         LOGGER.log(
                 Level.SEVERE, 
                 "Error on session [{0}]. {1}, caused by: {2}", 
                 objs(session,
                      throwable.getMessage(), 
                      throwable.getCause()));
-    }
-    
-    @OnClose
-    public void close(Session session, CloseReason closeReason) {
-        LOGGER.log(
-                Level.INFO, 
-                "Session [{0}] closed. Reason: {1}", 
-                objs(session, closeReason));
     }
     
     private static Object[] objs(Object... objects) {

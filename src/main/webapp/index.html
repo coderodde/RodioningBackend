@@ -22,24 +22,36 @@
         </pre>
         <span id="textspan"></span>
         <script type="text/javascript">
-            const endpointName = "/downloadProgramText";
+            const endpointName = "/download";
             
             function getWebSocketURL() {
-                const protocol = window.location.protocol;
-                const host = window.location.host;
-                
-                if (protocol === "http:") {
-                    return "ws://" + host + endpointName;
-                } else if (protocol === "https:") {
-                    return "wss://" + host + endpointName;
-                } else {
-                    throw "Unknown protocol '" + protocol + "'.";
-                }
+                return "wss://rodioning-backend.herokuapp.com/ctx/download";
+//                var tmp = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
+//                console.log("tmp: " + tmp);
+//                
+//                const protocol = window.location.protocol;
+//                const host = window.location.host;
+//                
+//                if (protocol === "http:") {
+//                    return "ws://" + host + endpointName;
+//                } else if (protocol === "https:") {
+//                    return "wss://" + host + endpointName;
+//                } else {
+//                    throw "Unknown protocol '" + protocol + "'.";
+//                }
             }
             
             const webSocketURL = getWebSocketURL();
             console.log(webSocketURL);
-            let socket = new WebSocket(webSocketURL);
+            var socket = new WebSocket(webSocketURL);
+            
+            socket.onclose = function(event) {
+                console.log("onclose, wasClean: " + event.wasClean)
+            };
+
+            socket.onerror = function(error) {
+                console.log("error: " + error.message);            ;
+            };
             
             socket.onopen = function(e) {
               socket.send("fhfds");  
